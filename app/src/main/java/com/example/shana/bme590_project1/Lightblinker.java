@@ -167,6 +167,22 @@ public class Lightblinker extends Activity {
 
     public void blinkLED(View v){
 
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                int key;
+                try {
+                    while ((key = mInputStream.read()) != -1)
+                        System.out.println(key);
+                    //call playand highlight here
+                        ToggleButton toggleButtonLED = (ToggleButton)findViewById(R.id.toggleButtonLED);
+                        toggleButtonLED.setText(key);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         byte[] buffer = new byte[1];
 
         if(buttonLED.isChecked())

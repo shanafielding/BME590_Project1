@@ -16,6 +16,7 @@ package com.example.shana.bme590_project1;
         import android.os.ParcelFileDescriptor;
         import android.util.Log;
         import android.view.View;
+        import android.widget.TextView;
         import android.widget.ToggleButton;
 
         import android.hardware.usb.UsbManager;
@@ -26,7 +27,7 @@ package com.example.shana.bme590_project1;
 
 @SuppressLint("NewApi")
 public class Lightblinker extends Activity {
-
+    private int currentKey=-1;
     // TAG is used to debug in Android logcat console
     private static final String TAG = "ArduinoAccessory";
 
@@ -141,6 +142,7 @@ public class Lightblinker extends Activity {
 
     private void openAccessory(UsbAccessory mAccessory2) {
         mFileDescriptor = mUsbManager.openAccessory(mAccessory2);
+
         if (mFileDescriptor != null) {
             mAccessory = mAccessory2;
             FileDescriptor fd = mFileDescriptor.getFileDescriptor();
@@ -165,37 +167,52 @@ public class Lightblinker extends Activity {
         }
     }
 
+
+/*
+    Thread t = new Thread(new Runnable() {
+        public void run() {
+            int key;
+            try {
+                while(true) {
+                    while ((key = mInputStream.read()) != -1) {
+                        System.out.println(key);
+                        //call playand highlight here
+                        ToggleButton toggleButtonLED = (ToggleButton) findViewById(R.id.toggleButtonLED);
+                        toggleButtonLED.setText(key);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    });*/
     public void blinkLED(View v){
 
+        TextView text = (TextView) findViewById(R.id.textView);
+        text.setText("blinkLED Called");
+        if (mInputStream==null){
+            text.setText("INPUTSTREAM NULL");
+        }
 
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                int key;
-                try {
-                    while ((key = mInputStream.read()) != -1)
-                        System.out.println(key);
-                    //call playand highlight here
-                        ToggleButton toggleButtonLED = (ToggleButton)findViewById(R.id.toggleButtonLED);
-                        toggleButtonLED.setText(key);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        if(buttonLED.isChecked()){
+            // Start polling thread
+            byte[] read_buffer=new byte[6];
+            //t.start();
+            text.setText("inside is checked");
 
-        byte[] buffer = new byte[1];
-
-        if(buttonLED.isChecked())
-            buffer[0]=(byte)0; // button says on, light is off
-        else
-            buffer[0]=(byte)1; // button says off, light is on
-
-        if (mOutputStream != null) {
             try {
-                mOutputStream.write(buffer);
+                mInputStream.read(read_buffer,0,6);
+                byte a=read_buffer[0];
+                char b=(char) a;
+                text.setText(Character.toString(b));
             } catch (IOException e) {
-                Log.e(TAG, "write failed", e);
+                e.printStackTrace();
             }
+
+        }
+        else{
+
+
         }
     }
 

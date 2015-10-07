@@ -168,7 +168,7 @@ public class Lightblinker extends Activity {
     }
 
 
-/*
+
     Thread t = new Thread(new Runnable() {
         public void run() {
             int key;
@@ -185,7 +185,7 @@ public class Lightblinker extends Activity {
                 e.printStackTrace();
             }
         }
-    });*/
+    });
     public void blinkLED(View v){
 
         TextView text = (TextView) findViewById(R.id.textView);
